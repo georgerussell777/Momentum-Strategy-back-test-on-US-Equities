@@ -1,0 +1,17 @@
+import yfinance as yf
+import pandas as pd
+import requests
+
+#Had to use Claude to help download the data as Wiki blocked intitial search
+#This data is used to get the tickers of the SNP500 
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+
+html = requests.get(url, headers=headers).text
+sp500 = pd.read_html(html)[0]
+
+#Creates a list of the first 50 tickers
+tickers = sp500['Symbol'].tolist()[:50]
+
+#Downloads price data from 2020-2023 for each of the Symbols in the list tickers and stores it to the data frame data
+data = yf.download(tickers, start='2020-01-01', end='2024-01-01')['Close']
